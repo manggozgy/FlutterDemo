@@ -159,9 +159,17 @@ class _ScaffoldRouteState extends State<ScaffoldRoute>
         shape: CircularNotchedRectangle(), // 底部导航栏打一个圆形的洞
         child: Row(
           children: [
-            IconButton(icon: Icon(Icons.home),onPressed: null),
+             IconButton(icon: Icon(Icons.home),onPressed: (){
+              setState(() {
+                Icon(Icons.home,color: Colors.blueAccent,);
+              });
+            }),
             SizedBox(), //中间位置空出
-            IconButton(icon: Icon(Icons.business),onPressed: null,),
+            IconButton(icon: Icon(Icons.business),onPressed: (){
+              setState(() {
+                Icon(Icons.business,color: Colors.blueAccent,);
+              });
+            },),
           ],
           mainAxisAlignment: MainAxisAlignment.spaceAround, //均分底部导航栏横向空间
         ),
