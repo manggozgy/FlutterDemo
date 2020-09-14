@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:doubanMovie/Model.dart';
 import 'package:doubanMovie/components/ImageWidget.dart';
+import 'package:doubanMovie/components/DashLine.dart';
 
 class HomeItemView extends StatelessWidget {
   final Subjects model;
@@ -21,6 +22,7 @@ class HomeItemView extends StatelessWidget {
           Rank(rank: rank),
           SizedBox(height: 12),
           MovieContent(model: model),
+          Text("data")
         ],
       ),
     );
@@ -58,61 +60,136 @@ class MovieContent extends StatelessWidget {
     return Container(
         height: 150,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
                 child: ImageWidget(url: model.images.large),
                 borderRadius: BorderRadius.circular(5)),
             getContentDesc(),
-            Text("data")
+            SizedBox(
+              width: 10,
+            ),
+            getDashLine(),
+            SizedBox(
+              width: 10,
+            ),
+            wishToWatch()
           ],
         ));
   }
 
   Widget getContentDesc() {
     return Expanded(
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-      // Icon(Icons.play_circle_filled,color: Colors.redAccent),
-      // getTitle()
-      getTitleWidget()
-        ],
+        children: [getTitleW(), Text("xingxing"), getCasts()],
       ),
     );
   }
 
   Widget getTitle() {
-    return Text.rich(TextSpan(children: [
-      TextSpan(
-          text: model.title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      TextSpan(
-          text: "(${model.title})",
-          style: TextStyle(fontSize: 18, color: Colors.black54))
-    ]));
+    //文字行数过多会导致图标无法放在顶部
+    return Row(
+      children: [
+        Icon(Icons.play_circle_outline, color: Colors.redAccent),
+        Expanded(
+          child: Text.rich(
+              TextSpan(children: [
+                TextSpan(
+                    text: model.title,
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: "(${model.year})",
+                    style: TextStyle(fontSize: 18, color: Colors.black54))
+              ]),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis),
+        ),
+      ],
+    );
   }
 
-  Widget getTitleWidget() {
+  Widget getTitleW() {
+    //Stack测试
     return Stack(
       children: <Widget>[
         Icon(
           Icons.play_circle_outline,
           color: Colors.redAccent,
         ),
-        Text.rich(
-          TextSpan(children: [
-            TextSpan(
-                text: "     " + model.title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            TextSpan(
-              text: "(${model.year})",
-              style: TextStyle(fontSize: 18, color: Colors.black54),
-            )
-          ]),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        Container(
+          margin: EdgeInsets.fromLTRB(25, 0, 0, 0),
+          child: Text.rich(
+            TextSpan(children: [
+              TextSpan(
+                  text: model.title,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              TextSpan(
+                text: "(${model.year})",
+                style: TextStyle(fontSize: 18, color: Colors.black54),
+              )
+            ]),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
   }
+//---------------------------导演演员组件----------------
+
+  Widget getCasts() {
+    final genres = model.genres.join(" ");
+    final directors = model.directors.first.name;
+    String casts = "";
+    for (var item in model.casts) {
+      casts = casts + " " + item.name;
+    }
+    return Text(
+      "$genres / $directors/$casts",
+      style: TextStyle(fontSize: 16),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+//-------------------想看-------------------------
+  Widget wishToWatch() {
+    return Column(
+      children: [
+        SizedBox(
+          height: 30,
+        ),
+        Icon(
+          Icons.hearing,
+          color: Color.fromARGB(255, 235, 170, 60),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "想看",
+          style:
+              TextStyle(color: Color.fromARGB(255, 235, 170, 60), fontSize: 16),
+        )
+      ],
+    );
+  }
+
+//---------------------------虚线----------------
+  Widget getDashLine() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 5),
+      height: 100,
+      width: 1,
+      child: DashedLine(
+        axis: Axis.vertical,
+        dashedHeight: 5,
+        count: 12,
+      ),
+    );
+  }
+//---------------------------评星组件----------------
+
 }
