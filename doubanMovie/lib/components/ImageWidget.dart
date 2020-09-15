@@ -31,13 +31,15 @@ class _StateImageWidget extends State<ImageWidget> {
       //加载成功
     }, onError: (dynamic exception, StackTrace stackTrace) {
       //加载失败
-      setState(() {
+      if(mounted){
+        setState(() {
         _image = Image.asset(
           widget.defImagePath,
           width: widget.w,
           height: widget.h,
         );
       });
+      }
     }));
   }
 

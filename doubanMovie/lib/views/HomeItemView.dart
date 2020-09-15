@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:doubanMovie/Model.dart';
 import 'package:doubanMovie/components/ImageWidget.dart';
 import 'package:doubanMovie/components/DashLine.dart';
+import 'package:doubanMovie/components/RatingBar.dart';
 
 class HomeItemView extends StatelessWidget {
   final Subjects model;
@@ -13,6 +14,7 @@ class HomeItemView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      padding: EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
           border:
               Border(bottom: BorderSide(width: 10, color: Color(0xffe2e2e2)))),
@@ -22,7 +24,7 @@ class HomeItemView extends StatelessWidget {
           Rank(rank: rank),
           SizedBox(height: 12),
           MovieContent(model: model),
-          Text("data")
+          Text(model.warning)
         ],
       ),
     );
@@ -65,6 +67,9 @@ class MovieContent extends StatelessWidget {
             ClipRRect(
                 child: ImageWidget(url: model.images.large),
                 borderRadius: BorderRadius.circular(5)),
+                SizedBox(
+              width: 10,
+            ),
             getContentDesc(),
             SizedBox(
               width: 10,
@@ -82,7 +87,11 @@ class MovieContent extends StatelessWidget {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [getTitleW(), Text("xingxing"), getCasts()],
+        children: [
+          getTitleW(),
+         getRatingStar(),
+          getCasts()
+        ],
       ),
     );
   }
@@ -162,7 +171,7 @@ class MovieContent extends StatelessWidget {
           height: 30,
         ),
         Icon(
-          Icons.hearing,
+          Icons.add_to_home_screen,
           color: Color.fromARGB(255, 235, 170, 60),
         ),
         SizedBox(
@@ -191,5 +200,20 @@ class MovieContent extends StatelessWidget {
     );
   }
 //---------------------------评星组件----------------
-
+  Widget getRatingStar(){
+    return Row(children: [
+       RatingBar(
+         selectAble:false,
+            onRatingUpdate: (value) {
+              print(value);
+            },
+            nomalImage: './assets/images/star_nomal.png',
+            selectImage: './assets/images/star.png',
+            maxRating: 10,
+            value: model.rating.average,
+            ),
+            SizedBox(width: 5,),
+            Text("${model.rating.average}")
+    ],);
+  }
 }
