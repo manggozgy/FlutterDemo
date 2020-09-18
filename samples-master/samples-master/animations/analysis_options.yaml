@@ -1,4 +1,4 @@
-include: package:pedantic/analysis_options.1.9.0.yaml
+include: package:./samples-master/samples-master/web/samples_index/analysis_options.yaml/analysis_options.1.9.0.yaml
 
 analyzer:
   strong-mode:

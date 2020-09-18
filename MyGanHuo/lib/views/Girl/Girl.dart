@@ -5,7 +5,9 @@ class Girl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(""),
+      child:Scaffold(
+        appBar: AppBar(title: Text("妹纸"),),
+      ),
     );
   }
 }

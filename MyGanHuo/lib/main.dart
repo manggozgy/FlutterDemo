@@ -6,8 +6,24 @@ import './views/Girl/Girl.dart';
 import './views/Category/Category.dart';
 
 void main() {
-  runApp(MyStackPage());
+  runApp(MyApp());
 }
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyStackPage(),
+      theme: ThemeData(
+          primaryColor: Colors.blue[400],
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent),
+    );
+  }
+}
+
 
 class MyStackPage extends StatefulWidget {
   MyStackPage({Key key}) : super(key: key);
@@ -18,6 +34,7 @@ class MyStackPage extends StatefulWidget {
 
 class _MyStackPageState extends State<MyStackPage> {
   var _currentIdenx = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
