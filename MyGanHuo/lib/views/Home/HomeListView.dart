@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:flutter_easyrefresh/material_header.dart';
-import 'package:flutter_easyrefresh/material_footer.dart';
+import 'package:flutter_easyrefresh/taurus_header.dart';
+import 'package:flutter_easyrefresh/taurus_footer.dart';
 
 class HotView extends StatefulWidget {
   const HotView({Key key}) : super(key: key);
@@ -11,41 +11,68 @@ class HotView extends StatefulWidget {
 }
 
 class _HotViewState extends State<HotView> {
+  int _count = 20;
+
   @override
   Widget build(BuildContext context) {
-    return EasyRefresh(
-       header: MaterialHeader(),
-    footer: MaterialFooter(),
-          child: ListView.separated(
-        itemCount: 10,
-        separatorBuilder:(BuildContext context, int index){
-          return Divider(thickness:5,color: Color(0xffe2e2e2));
+    return Scaffold(
+     
+      body: EasyRefresh.custom(
+        header: TaurusHeader(),
+        footer: TaurusFooter(),
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 2), () {
+            if (mounted) {
+              setState(() {
+                _count = 20;
+              });
+            }
+          });
         },
-        itemBuilder: (BuildContext context, int index){
-          return  Container(
-
-          margin: EdgeInsets.all(8),
-          child: hotView()
-        );
+        onLoad: () async {
+          await Future.delayed(Duration(seconds: 2), () {
+            if (mounted) {
+              setState(() {
+                _count += 20;
+              });
+            }
+          });
         },
-            
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Container(
+                  child: hotView(),
+                  margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  decoration: BoxDecoration(
+                      border: Border(
+                          bottom:
+                              BorderSide(width: 5, color: Color(0xffe2e2e2)))),
+                );
+              },
+              childCount: _count,
+            ),
+          ),
+        ],
       ),
-      onRefresh: () async{
-      
-    },
-    onLoad: () async {
-      
-    },
     );
   }
 
-    Widget hotView(){
-      return Column(
-          mainAxisSize:MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [titleRow(),SizedBox(height: 10), Text("descdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdesc"), SizedBox(height: 10),views()],
-        );
-    }
+  Widget hotView() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleRow(),
+        SizedBox(height: 10),
+        Text(
+            "descdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdesc"),
+        SizedBox(height: 10),
+        views()
+      ],
+    );
+  }
 
   Widget titleRow() {
     return Row(
