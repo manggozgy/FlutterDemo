@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/taurus_header.dart';
 import 'package:flutter_easyrefresh/taurus_footer.dart';
+import 'package:MyGanHuo/viewModel/ArticleViewModel.dart';
 
 class HotView extends StatefulWidget {
   const HotView({Key key}) : super(key: key);
@@ -12,65 +14,73 @@ class HotView extends StatefulWidget {
 
 class _HotViewState extends State<HotView> {
   int _count = 20;
-
+  @override
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-     
-      body: EasyRefresh.custom(
-        header: TaurusHeader(),
-        footer: TaurusFooter(),
-        onRefresh: () async {
-          await Future.delayed(Duration(seconds: 2), () {
+    return ChangeNotifierProvider(
+      create: (_) => ArticleViewModel(),
+      child: Scaffold(
+        body: EasyRefresh.custom(
+          header: TaurusHeader(),
+          footer: TaurusFooter(),
+          onRefresh: () async {
             if (mounted) {
               setState(() {
-                _count = 20;
+                ArticleViewModel model = Provider.of<ArticleViewModel>(context,listen: false);
+                model.getArticles();
+                
               });
             }
-          });
-        },
-        onLoad: () async {
-          await Future.delayed(Duration(seconds: 2), () {
-            if (mounted) {
-              setState(() {
-                _count += 20;
-              });
-            }
-          });
-        },
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Container(
-                  child: hotView(),
-                  margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom:
-                              BorderSide(width: 5, color: Color(0xffe2e2e2)))),
-                );
-              },
-              childCount: _count,
+          },
+          onLoad: () async {
+            await Future.delayed(Duration(seconds: 2), () {
+              if (mounted) {
+                setState(() {
+                  _count += 20;
+                });
+              }
+            });
+          },
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Container(
+                    child: hotView(),
+                    margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 5, color: Color(0xffe2e2e2)))),
+                  );
+                },
+                childCount: _count,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget hotView() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        titleRow(),
-        SizedBox(height: 10),
-        Text(
-            "descdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdescdesc"),
-        SizedBox(height: 10),
-        views()
-      ],
+    return Consumer<ArticleViewModel>(
+      builder: (context, model, child) {
+        if (model.article != null) {
+          print(model.article.data[0].desc);
+        }
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleRow(),
+            SizedBox(height: 10),
+            Text("desc"),
+            SizedBox(height: 10),
+            views()
+          ],
+        );
+      },
     );
   }
 

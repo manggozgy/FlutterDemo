@@ -4,10 +4,15 @@ import './views/Home/Home.dart';
 import './views/Profile/Profile.dart';
 import './views/Girl/Girl.dart';
 import './views/Category/Category.dart';
+import 'package:provider/provider.dart';
 import 'package:MyGanHuo/viewModel/ArticleViewModel.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<ArticleViewModel>(
+      create: (_) => ArticleViewModel(),
+    )
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +30,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class MyStackPage extends StatefulWidget {
   MyStackPage({Key key}) : super(key: key);
 
@@ -41,6 +45,7 @@ class _MyStackPageState extends State<MyStackPage> {
     super.initState();
     ArticleViewModel().getArticles();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +68,7 @@ class _MyStackPageState extends State<MyStackPage> {
         ),
         body: IndexedStack(
           index: _currentIdenx,
-          children: [Home(),Category(),Girl(),Profile()],
+          children: [Home(), Category(), Girl(), Profile()],
         ));
   }
 }
