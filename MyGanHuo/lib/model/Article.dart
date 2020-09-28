@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart' show ChangeNotifier;
 import 'package:json_annotation/json_annotation.dart'; 
-import 'package:provider/provider.dart';
 
 part 'Article.g.dart';
 
 
 @JsonSerializable()
-  class Article extends Object with ChangeNotifier {
-    List<Data> dataList;
+  class Article extends Object  {
   @JsonKey(name: 'category')
   String category;
 
@@ -21,10 +18,7 @@ part 'Article.g.dart';
   @JsonKey(name: 'status')
   int status;
 
-  Article(this.category,this.data,this.hot,this.status,){
-    dataList = data;
-    notifyListeners();
-  }
+  Article(this.category,this.data,this.hot,this.status,);
 
   factory Article.fromJson(Map<String, dynamic> srcJson) => _$ArticleFromJson(srcJson);
 

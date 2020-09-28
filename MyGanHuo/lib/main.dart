@@ -4,6 +4,7 @@ import './views/Home/Home.dart';
 import './views/Profile/Profile.dart';
 import './views/Girl/Girl.dart';
 import './views/Category/Category.dart';
+import 'package:MyGanHuo/viewModel/ArticleViewModel.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,6 +36,11 @@ class MyStackPage extends StatefulWidget {
 class _MyStackPageState extends State<MyStackPage> {
   var _currentIdenx = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    ArticleViewModel().getArticles();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
