@@ -15,7 +15,6 @@ class HotView extends StatefulWidget {
 class _HotViewState extends State<HotView> {
   int _count = 20;
   @override
-  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ArticleViewModel(),
@@ -26,9 +25,10 @@ class _HotViewState extends State<HotView> {
           onRefresh: () async {
             if (mounted) {
               setState(() {
-                ArticleViewModel model = Provider.of<ArticleViewModel>(context,listen: false);
-                model.getArticles();
-                
+                // ArticleViewModel model =
+                //     Provider.of<ArticleViewModel>(context, listen: false);
+                // model.getArticles();
+                context.read<ArticleViewModel>().getArticles();
               });
             }
           },
@@ -46,7 +46,7 @@ class _HotViewState extends State<HotView> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   return Container(
-                    child: hotView(),
+                    child: _hotViews(),
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
                     decoration: BoxDecoration(
                         border: Border(
@@ -62,51 +62,84 @@ class _HotViewState extends State<HotView> {
       ),
     );
   }
+}
 
-  Widget hotView() {
-    return Consumer<ArticleViewModel>(
-      builder: (context, model, child) {
-        if (model.article != null) {
-          print(model.article.data[0].desc);
-        }
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            titleRow(),
-            SizedBox(height: 10),
-            Text("desc"),
-            SizedBox(height: 10),
-            views()
-          ],
-        );
-      },
-    );
-  }
+Widget hotView() {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      titleRow(),
+      SizedBox(height: 10),
+      Consumer<ArticleViewModel>(
+        builder: (context, model, child) {
+          var title = "123";
+          if (model.article != null) {
+            title = (model.article.data[0].desc);
+          }
+          print(model.article);
+          return Text(title);
+        },
+      ),
+      SizedBox(height: 10),
+      views()
+    ],
+  );
+}
 
-  Widget titleRow() {
-    return Row(
-      children: [
-        Expanded(
-            child: Text(
-                "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitle")),
-        SizedBox(
-          width: 10,
-        ),
-        Text("author")
-      ],
-    );
-  }
+Widget titleRow() {
+  return Row(
+    children: [
+      Expanded(
+          child: Text(
+              "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitle")),
+      SizedBox(
+        width: 10,
+      ),
+      Text("author")
+    ],
+  );
+}
 
-  Widget views() {
-    return Row(
-      children: [
-        Text("views"),
-        Text("likes"),
-        Text("star"),
-        Text("iOS"),
-      ],
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+Widget views() {
+  return Row(
+    children: [
+      Text("views"),
+      Text("likes"),
+      Text("star"),
+      Text("iOS"),
+    ],
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  );
+}
+
+class _hotViews extends StatelessWidget {
+  
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ArticleViewModel>(
+      create: (_) => ArticleViewModel(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          titleRow(),
+          SizedBox(height: 10),
+          Consumer<ArticleViewModel>(
+            builder: (context, model, child) {
+              var title = "123";
+              if (model.article != null) {
+                title = (model.article.data[0].desc);
+              }
+              print("${model.article}  isis");
+              
+              return Text(title);
+            },
+          ),
+          SizedBox(height: 10),
+          views()
+        ],
+      ),
     );
   }
 }

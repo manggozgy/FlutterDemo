@@ -9,8 +9,8 @@ import 'package:MyGanHuo/viewModel/ArticleViewModel.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider<ArticleViewModel>(
-      create: (_) => ArticleViewModel(),
+    ChangeNotifierProvider(
+      create: (context) => ArticleViewModel(),
     )
   ], child: MyApp()));
 }
