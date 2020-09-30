@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('object');
     return Scaffold(
       appBar: AppBar(
         title: Text('Flutter Demo Home Page'),
@@ -65,12 +66,7 @@ class MyHomePage extends StatelessWidget {
             // and retrieves its model (Counter, in this case).
             // Then it uses that model to build widgets, and will trigger
             // rebuilds if the model is updated.
-            Consumer<Counter>(
-              builder: (context, counter, child) => Text(
-                '${counter.value}',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ),
+            click(),
           ],
         ),
       ),
@@ -98,6 +94,23 @@ class MyHomePage extends StatelessWidget {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class click extends StatelessWidget {
+  const click({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Consumer<Counter>(builder: (context, counter, child) {
+        print('object1');
+        return Text(
+          '${counter.value}',
+          style: Theme.of(context).textTheme.headline4,
+        );
+      }),
     );
   }
 }

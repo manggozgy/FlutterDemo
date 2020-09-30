@@ -4,6 +4,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/taurus_header.dart';
 import 'package:flutter_easyrefresh/taurus_footer.dart';
 import 'package:MyGanHuo/viewModel/ArticleViewModel.dart';
+import 'package:MyGanHuo/components/provider_widget.dart';
 
 class HotView extends StatefulWidget {
   const HotView({Key key}) : super(key: key);
@@ -14,12 +15,13 @@ class HotView extends StatefulWidget {
 
 class _HotViewState extends State<HotView> {
   int _count = 20;
+  
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ArticleViewModel(),
-      child: Scaffold(
+    return  Scaffold(
+        
         body: EasyRefresh.custom(
+          firstRefresh:true,
           header: TaurusHeader(),
           footer: TaurusFooter(),
           onRefresh: () async {
@@ -46,7 +48,7 @@ class _HotViewState extends State<HotView> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   return Container(
-                    child: _hotViews(),
+                    child: _hotViews(index: index,),
                     margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
                     decoration: BoxDecoration(
                         border: Border(
@@ -59,12 +61,13 @@ class _HotViewState extends State<HotView> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
 Widget hotView() {
+  print("123");
+
   return Column(
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,6 +81,8 @@ Widget hotView() {
             title = (model.article.data[0].desc);
           }
           print(model.article);
+          var m = context.watch<ArticleViewModel>();
+          print(m.article);
           return Text(title);
         },
       ),
@@ -114,32 +119,67 @@ Widget views() {
 }
 
 class _hotViews extends StatelessWidget {
+  int index;
+  _hotViews({this.index});
   
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ArticleViewModel>(
-      create: (_) => ArticleViewModel(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleRow(),
-          SizedBox(height: 10),
-          Consumer<ArticleViewModel>(
-            builder: (context, model, child) {
-              var title = "123";
-              if (model.article != null) {
-                title = (model.article.data[0].desc);
-              }
-              print("${model.article}  isis");
-              
-              return Text(title);
-            },
-          ),
-          SizedBox(height: 10),
-          views()
-        ],
-      ),
+    
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleRow(),
+        SizedBox(height: 10),
+        Consumer<ArticleViewModel>(
+          builder: (context, model, child) {
+            var title = "123";
+            if (model.article != null) {
+              title = (model.article.data[index].desc);
+            }
+            print("${model.article}  isis");
+             
+            return Text(title);
+          },
+        ),
+        SizedBox(height: 10),
+        views()
+      ],
     );
+  }
+}
+
+
+class _hotViews1 extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderWidget<ArticleViewModel>(
+        model: ArticleViewModel(),
+        onReady: (model) => model.getArticles(),
+        builder: (context, model, child) {
+           var title = "123";
+                  if (model.article != null) {
+                    title = (model.article.data[0].desc);
+                  }
+                  print("${model.article}  isis");
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleRow(),
+              SizedBox(height: 10),
+              // Consumer<ArticleViewModel>(
+                // builder: (context, model, child) {
+                 
+
+                 Text(title),
+                // },
+              // ),
+              SizedBox(height: 10),
+              views()
+            ],
+          );
+        });
   }
 }

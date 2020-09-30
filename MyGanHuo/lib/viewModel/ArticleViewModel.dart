@@ -6,15 +6,21 @@ import 'package:MyGanHuo/model/Article.dart';
 
 class ArticleViewModel extends BaseViewModel {
   Article article;
+  int count = 0;
   void getArticles()  {
     loding(true);
      DioManager().requestList(
-        JKMethod.GET, "${JKApi.hot}/views/category/Article/count/1",
+        JKMethod.GET, "${JKApi.hot}/views/category/Article/count/20",
         success: (data) {
           article = Article.fromJson(data);
+
           print(article.data[0].desc);
       loding(false);
       
     }, error: (error) {});
+  }
+  void rasieNum(){
+    count++;
+    loding(false);
   }
 }
