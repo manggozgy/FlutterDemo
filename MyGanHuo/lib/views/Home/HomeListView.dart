@@ -13,171 +13,178 @@ class HotView extends StatefulWidget {
   _HotViewState createState() => _HotViewState();
 }
 
-class _HotViewState extends State<HotView> {
-  int _count = 20;
-  
+class _HotViewState extends State<HotView> with AutomaticKeepAliveClientMixin{
+   EasyRefreshController _controller;
+   @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() { 
+    super.initState();
+     _controller = EasyRefreshController();
+  }
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        
-        body: EasyRefresh.custom(
-          firstRefresh:true,
-          header: TaurusHeader(),
-          footer: TaurusFooter(),
-          onRefresh: () async {
-            if (mounted) {
-              setState(() {
-                // ArticleViewModel model =
-                //     Provider.of<ArticleViewModel>(context, listen: false);
-                // model.getArticles();
-                context.read<ArticleViewModel>().getArticles();
-              });
-            }
-          },
-          onLoad: () async {
-            await Future.delayed(Duration(seconds: 2), () {
-              if (mounted) {
-                setState(() {
-                  _count += 20;
-                });
+     super.build(context);
+    return Scaffold(
+        body: ProviderWidget<ArticleViewModel>(
+            model: ArticleViewModel(),
+            onReady: (model) => model.getArticles(),
+            builder: (context, model, child) {
+              if (context.watch<ArticleViewModel>().article != null) {
+                return EasyRefresh.custom(
+                  controller: _controller,
+                  enableControlFinishLoad:true,
+                  enableControlFinishRefresh: false,
+                  firstRefresh: false,
+                  header: TaurusHeader(),
+                  footer: TaurusFooter(),
+                  onRefresh: () async {
+                    if (mounted) {
+                      setState(() {
+                        // ArticleViewModel model =
+                        //     Provider.of<ArticleViewModel>(context, listen: false);
+                        // model.getArticles();
+                        context.read<ArticleViewModel>().getArticles();
+                        
+                      });
+                    }
+                  },
+                  onLoad: () async {
+                        _controller.finishLoad(noMore: context.read<ArticleViewModel>().article.data.length >= 20);
+                      if (mounted) {
+                        ArticleViewModel model =
+                            Provider.of<ArticleViewModel>(context, listen: false);
+                        if(model.isLoding){
+                          _controller.finishRefresh(success: false);
+
+                        }
+                        setState(() {
+                          context.read<ArticleViewModel>().getMoreArticles();
+
+                        });
+                      }
+                  },
+                  slivers: <Widget>[
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return Container(
+                          child: _hotViews(
+                            index: index,
+                          ),
+                          // child: _hotViews1(index: index,),
+                          margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 5, color: Color(0xffe2e2e2)))),
+                        );
+                      },
+                          childCount: context
+                              .watch<ArticleViewModel>()
+                              .article
+                              .data
+                              .length),
+                    ),
+                  ],
+                );
+              }else{
+                return Container(child: Text("loding"),);
               }
-            });
-          },
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return Container(
-                    child: _hotViews(index: index,),
-                    margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 5, color: Color(0xffe2e2e2)))),
-                  );
-                },
-                childCount: _count,
-              ),
-            ),
-          ],
-        ),
-      );
+            }));
   }
 }
 
-Widget hotView() {
-  print("123");
 
-  return Column(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      titleRow(),
-      SizedBox(height: 10),
-      Consumer<ArticleViewModel>(
-        builder: (context, model, child) {
-          var title = "123";
-          if (model.article != null) {
-            title = (model.article.data[0].desc);
-          }
-          print(model.article);
-          var m = context.watch<ArticleViewModel>();
-          print(m.article);
-          return Text(title);
-        },
-      ),
-      SizedBox(height: 10),
-      views()
-    ],
-  );
-}
-
-Widget titleRow() {
-  return Row(
+Widget titleRow(int index) {
+  return  Consumer<ArticleViewModel>(
+          builder: (context, model, child) {
+            return Row(
     children: [
       Expanded(
           child: Text(
-              "TitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitleTitle")),
+              model.article.data[index].title)),
       SizedBox(
         width: 10,
       ),
-      Text("author")
+      Text(model.article.data[index].author)
     ],
+  );}
   );
 }
 
-Widget views() {
-  return Row(
+Widget views(int index) {
+  
+  return Consumer<ArticleViewModel>(
+          builder: (context, model, child) {
+            return Row(
     children: [
-      Text("views"),
-      Text("likes"),
-      Text("star"),
-      Text("iOS"),
+      Text(model.article.data[index].views.toString()),
+      Text(model.article.data[index].likeCounts.toString()),
+      Text(model.article.data[index].stars.toString()),
+      Text("${model.article.data[index].type}--$index"),
     ],
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
   );
+          });
 }
 
 class _hotViews extends StatelessWidget {
-  int index;
+  final int index;
   _hotViews({this.index});
-  
+
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        titleRow(),
+        titleRow(index),
         SizedBox(height: 10),
         Consumer<ArticleViewModel>(
           builder: (context, model, child) {
-            var title = "123";
+            var title = "";
             if (model.article != null) {
               title = (model.article.data[index].desc);
             }
-            print("${model.article}  isis");
-             
+
             return Text(title);
           },
         ),
         SizedBox(height: 10),
-        views()
+        views(index)
       ],
     );
   }
 }
 
-
 class _hotViews1 extends StatelessWidget {
-
+  final int index;
+  _hotViews1({this.index});
   @override
   Widget build(BuildContext context) {
     return ProviderWidget<ArticleViewModel>(
         model: ArticleViewModel(),
         onReady: (model) => model.getArticles(),
         builder: (context, model, child) {
-           var title = "123";
-                  if (model.article != null) {
-                    title = (model.article.data[0].desc);
-                  }
-                  print("${model.article}  isis");
+          var title = "123";
+          if (model.article != null) {
+            title = (model.article.data[index].desc);
+          }
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              titleRow(),
+              titleRow(index),
               SizedBox(height: 10),
               // Consumer<ArticleViewModel>(
-                // builder: (context, model, child) {
-                 
+              // builder: (context, model, child) {
 
-                 Text(title),
-                // },
+              Text(title),
+              // },
               // ),
               SizedBox(height: 10),
-              views()
+              views(index)
             ],
           );
         });
