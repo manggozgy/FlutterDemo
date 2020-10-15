@@ -5,6 +5,7 @@ import 'package:flutter_easyrefresh/taurus_header.dart';
 import 'package:flutter_easyrefresh/taurus_footer.dart';
 import 'package:MyGanHuo/viewModel/ArticleViewModel.dart';
 import 'package:MyGanHuo/components/provider_widget.dart';
+import 'package:MyGanHuo/views/webview.dart';
 
 class HotView extends StatefulWidget {
   const HotView({Key key}) : super(key: key);
@@ -135,25 +136,33 @@ class _hotViews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        titleRow(index),
-        SizedBox(height: 10),
-        Consumer<ArticleViewModel>(
-          builder: (context, model, child) {
-            var title = "";
-            if (model.article != null) {
-              title = (model.article.data[index].desc);
-            }
+    return GestureDetector(
+      onTap: (){
+          ArticleViewModel model =Provider.of<ArticleViewModel>(context, listen: false);
 
-            return Text(title);
-          },
-        ),
-        SizedBox(height: 10),
-        views(index)
-      ],
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => webView(title:model.article.data[index].title ,id: model.article.data[index].url,)));
+
+      },
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          titleRow(index),
+          SizedBox(height: 10),
+          Consumer<ArticleViewModel>(
+            builder: (context, model, child) {
+              var title = "";
+              if (model.article != null) {
+                title = (model.article.data[index].desc);
+              }
+
+              return Text(title);
+            },
+          ),
+          SizedBox(height: 10),
+          views(index)
+        ],
+      ),
     );
   }
 }
